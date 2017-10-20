@@ -1,4 +1,6 @@
-def hash(inp,meth)
+import numpy as np
+
+def hash_fcn(inp,meth):
 # HASH - Convert an input variable into a message digest using any of
 #        several common hash algorithms
 #
@@ -39,41 +41,42 @@ def hash(inp,meth)
 #     disp(h)
 # end
 
-inp=inp(:);
-# convert strings and logicals into uint8 format
-if (inp.isalpha() or type(inp) == type(True))
-    inp=uint8(inp);
-else % convert everything else into uint8 format without loss of data
-    inp=typecast(inp,'uint8');
-end
+    inp = np.uint8(inp);
 
-% verify hash method, with some syntactical forgiveness:
-meth=upper(meth);
-switch meth
-    case 'SHA1'
+#===============================================================================
+# # convert strings and logicals into uint8 format
+# if (inp.isalpha() or type(inp) == type(True))
+#     inp=np.uint8(inp);
+# else # convert everything else into uint8 format without loss of data
+#     inp=np.ui(inp,'uint8');
+# end
+#===============================================================================
+    
+    # verify hash method, with some syntactical forgiveness:
+    meth= meth.upper();
+    if meth == "SHA1":
         meth='SHA-1';
-    case 'SHA256'
+    elif meth == 'SHA256'
         meth='SHA-256';
-    case 'SHA384'
+    elif meth ==  'SHA384'
         meth='SHA-384';
-    case 'SHA512'
+    elif meth == 'SHA512'
         meth='SHA-512';
-    otherwise
-end
-algs={'MD2','MD5','SHA-1','SHA-256','SHA-384','SHA-512'};
-if isempty(strmatch(meth,algs,'exact'))
-    error(['Hash algorithm must be ' ...
-        'MD2, MD5, SHA-1, SHA-256, SHA-384, or SHA-512']);
-end
 
-% create hash
-x=java.security.MessageDigest.getInstance(meth);
-x.update(inp);
-h=typecast(x.digest,'uint8');
-h=dec2hex(h)';
-if(size(h,1))==1 % remote possibility: all hash bytes < 128, so pad:
-    h=[repmat('0',[1 size(h,2)]);h];
-end
-h=lower(h(:)');
-clear x
-return
+    algs={'MD2','MD5','SHA-1','SHA-256','SHA-384','SHA-512'};
+    
+    if meth not in algs:
+        print("Error: Hash algorithm must be ' ...
+            'MD2, MD5, SHA-1, SHA-256, SHA-384, or SHA-512');
+
+    # create hash
+    x=java.security.MessageDigest.getInstance(meth);
+    x.update(inp);
+    h=typecast(x.digest,'uint8');
+    h=dec2hex(h)';
+    if(size(h,1))==1 % remote possibility: all hash bytes < 128, so pad:
+        h=[repmat('0',[1 size(h,2)]);h];
+    end
+    h=lower(h(:)');
+    clear x
+    return h
