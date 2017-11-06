@@ -1,7 +1,5 @@
+% Scott Rosoff
+
 SMA = SMAuthProtocol();
-
-
-%Your code goes here: simulate the server impersonation attack 
-%of Cai, Li, Li, and Deng.  
+[SMA,r1, M1, M2, M3] = eavesdropBlockLast(SMA);
 [SMA, accept] = continueAsReader(SMA, M3);
-%Code written after the call to continueAsReader will not be graded!
